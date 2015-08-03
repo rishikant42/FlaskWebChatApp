@@ -95,8 +95,8 @@ xmlhttp.onreadystatechange=function()
    arry = JSON.parse(xmlhttp.responseText);
     var outs = ""
     var i;
-    for(i = arry.length-1; i >= 0; i--) {
-        outs += arr[i][0]+'</br>';
+    for(i = 0; i < arry.length;i++) {
+        outs += arry[i][0]+'</br>';
     }
 
     document.getElementById("user").innerHTML=outs;

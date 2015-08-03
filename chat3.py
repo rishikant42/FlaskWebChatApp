@@ -4,29 +4,19 @@ import jinja2
 import time
 import simplejson as json
 import requests
+from microsofttranslator import Translator
+import os
 
 app = Flask(__name__)
 app.secret_key = 'my precious'
 
 @app.route('/')
 def file():
-    #return render_template('login.html', errro="")
-    #import ipdb
-    #ipdb.set_trace()
     if session.get('logged_in_user', False):
-        #ipdb.set_trace()
         return redirect(url_for('chat'))
     else:
-        #return redirect(url_for('login'))
         return render_template("login.html",error="welcome to open chat")
 
-@app.route('/join', methods=['POST'])
-def join():
-    with sqlite3.connect("sample.db") as connection:
-        c = connection.cursor()
-        uname = request.form['username']
-        c.execute("INSERT INTO currentusers(name) VALUES(?)", (uname,))
-    return uname
 
 @app.route('/user')
 def user():
@@ -51,12 +41,10 @@ def send():
     with sqlite3.connect("sample.db") as connection:
         c = connection.cursor()
         cht = request.form['msg']
-        #payload = {'q': cht,'key':'AIzaSyBtfSp9TSlUDCNJ0jTwFc-PelOc24-LuzM','source':'en','target':'hi'}
-        #r = requests.get("https://www.googleapis.com/language/translate/v2", params=payload)
-        #r = r.json()['data']['translations'][0]['translatedText']
-        #nam = request.form['usname']
+        translator = Translator('rk', os.environ['CLIENT_KEY'])
+        p = translator.translate(cht, "hi")
         t = time.strftime("%Y-%m-%d %H:%M:%S")
-        c.execute("INSERT INTO chats(chat, time, name) VALUES(?, ?, ?)", (cht, t,session.get('logged_in_user')))
+        c.execute("INSERT INTO chats(chat, time, name) VALUES(?, ?, ?)", (p, t,session.get('logged_in_user')))
     return "Ok"
 
 @app.route('/logout')
@@ -75,14 +63,11 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
-    #import ipdb
-    #ipdb.set_trace()
     if request.method == 'POST':
         with sqlite3.connect("sample.db") as connection:
             c = connection.cursor()
             y = c.execute("select * from users where name=?", (request.form['username'], ))
-          #  import ipdb
-           # ipdb.set_trace()
+
             y = y.fetchall()
             if y == []:
                 error = "user does not exist"
@@ -91,22 +76,13 @@ def login():
             else:
                 c.execute("INSERT INTO currentusers VALUES(?)", (request.form['username'], ))
                 session['logged_in_user'] = request.form['username']
-                #flash('You were logged in.')
                 return redirect(url_for('chats'))
     return render_template('login.html', error=error)
 
 
-##@app.route('/logout')
-##def logout():
-##    session.pop('logged_in', None)
-##    flash('You were logged out.')
-##    return "you were logged out."
-
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        #import ipdb
-        #ipdb.set_trace()
         with sqlite3.connect("sample.db") as connection:
             c = connection.cursor()
             name = request.form['username']
