@@ -1,0 +1,124 @@
+<html>
+ <head>
+  <title>chat</title>
+  <style>
+  #right {
+	margin-left:92%;
+	}
+  #time {
+	background: gray;
+	size: 1%;
+	}
+  </style>
+ </head>
+
+ <body>
+ <p> <div id="mydiv"></div> </p>
+ 
+ <div id="right">
+ <p> <h3>Online:</h3> <div id="user"></div></p>
+ </div>
+
+  <!--label for="msg">Enter msg: </label-->
+  <input type="text" name="msg" id="msg">
+  <button type="button" onclick="loadXMLDoc()">></button>
+
+<script>
+function loadXMLDoc()
+{
+var x = document.getElementById('msg');
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    //document.getElementById("mydiv").innerHTML=xmlhttp.responseText;
+	tt();
+    }
+  }
+xmlhttp.open("POST","http://127.0.0.1:5000/send",true);
+xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+xmlhttp.send("msg="+x.value);
+}
+
+function tt()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    arr = JSON.parse(xmlhttp.responseText);
+    var out = ""
+    var i;
+    for(i = arr.length-1; i >= 0; i--) {
+        out += '<h4>' + arr[i][0] + '</h4>'+'  -  '+arr[i][1]+'  -  '+'<div id="time">'+arr[i][2]+'</div>'+'</br>';
+    }
+    document.getElementById("mydiv").innerHTML=out;
+    }
+  }
+xmlhttp.open("GET","http://127.0.0.1:5000/chat",true);
+xmlhttp.send();
+}
+
+function tc()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+   arry = JSON.parse(xmlhttp.responseText);
+    var outs = ""
+    var i;
+    for(i = arry.length-1; i >= 0; i--) {
+        outs += arr[i][0]+'</br>';
+    }
+
+    document.getElementById("user").innerHTML=outs;
+    }
+  }
+xmlhttp.open("GET","http://127.0.0.1:5000/user",true);
+xmlhttp.send();
+}
+
+function start()
+{
+tt();
+tc();
+}
+
+//window.onload = tt;
+//window.onload = tc;
+window.onload = start;
+setInterval('start()',5000);
+</script>
+
+<p><a href="/logout">click here</a> to logout</p>
+
+ </body>
+</html>

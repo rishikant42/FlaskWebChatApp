@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>ChatApp</title>
+ <style>
+   body {
+        margin-left: 35%;
+        margin-top: 11%;
+   }
+ </style>
+</head>
+<body>
+ <form method="post" action="{{url_for('login')}}">
+  <label for="username">Enter user name: </label>
+  <input type="text" name="username"/> </br>
+  <lable for="password">Enter password: </label>
+  <input type="password" name="password"/> <br>
+  <input type="submit" value="login"></input>
+ </form>
+<h2>{{error}}</h2>
+<p>To create an account <a href="/register">click here</a></p>
+</body>
+</html>
